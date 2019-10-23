@@ -1,5 +1,4 @@
-#include "game_logic.h"
-
+#include <ca/game_logic.h>
 
 void init_player(server_t* server, player_ptr* player) {
 	player_t* tmp = malloc(sizeof(player_t));

@@ -1,10 +1,8 @@
-#include "game_logic.h"
-
+#include <ca/cadventure.h>
+#include <ca/game_logic.h>
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <winsock2.h>
-#pragma comment(lib,"ws2_32.lib")
 
 #define WIDTH (64)
 #define HEIGHT (32)
@@ -142,24 +140,6 @@ void draw_console(console_t* console) {
 int main() {
 	console_t* console;
 	init_console(&console, (int2_t) {WIDTH,HEIGHT});
-
-	server_t* server;
-	init_server(&server);
-	
-	player_t* player;
-	init_player(server,&player);
-
-	player_t* player2;
-	init_player(server, &player2);
-
-	char* perse;
-	itoa(server->player_count, &perse, 10);
-	draw_text(console, (int2_t) { WIDTH / 2, HEIGHT / 2 - 1 },&perse, BG_WHITE | FG_BLACK);
-	draw_pixel(console, (int2_t) { WIDTH/2, HEIGHT/2 }, BG_WHITE | FG_WHITE);
-	while (1) {
-
-		draw_console(console);
-	}
 
 	return 0;
 }

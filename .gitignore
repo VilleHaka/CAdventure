@@ -509,7 +509,7 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-project-files/
+project-files/**
 # OpenCover UI analysis results
 OpenCover/
 
