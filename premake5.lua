@@ -18,9 +18,7 @@ workspace "CAdventure"
 		systemversion "8.1"
 		defines {
 			"_CRT_SECURE_NO_WARNINGS",
-			"WIN32_LEAN_AND_MEAN",
-			"COBJMACROS",
-			"INITGUID"
+			"WIN32_LEAN_AND_MEAN"
 		}
 
 
@@ -33,16 +31,16 @@ project "game"
 	-- filter { "files:source/*/**.c" }
 		-- flags {"ExcludeFromBuild"}
 
-	configuration "x64"
-		libdirs {}
+	--configuration "x64"
+		--libdirs {}
 		
 	--configuration "x86"
 		--libdirs {}
 		
-	configuration "not macosx"
-		includedirs {"./include"}
-	configuration "macosx"
-		sysincludedirs {"./include"}
+	--configuration "not macosx"
+	--	includedirs {"./include"}
+--	configuration "macosx"
+	--	sysincludedirs {"./include"}
 
 	configuration "windows"
 		defines {}
