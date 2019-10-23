@@ -23,7 +23,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>game</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -159,7 +159,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\game\game_logic.h" />
+    <ClInclude Include="..\game\player_logic.h" />
+    <ClInclude Include="..\game\server_logic.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\game\game_logic.c" />
     <ClCompile Include="..\game\game_main.c" />
+    <ClCompile Include="..\game\player_logic.c" />
+    <ClCompile Include="..\game\server_logic.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

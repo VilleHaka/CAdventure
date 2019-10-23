@@ -1,3 +1,5 @@
+#include "game_logic.h"
+
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -137,43 +139,6 @@ void draw_console(console_t* console) {
 }
 
 
-int game(console_t* console) {
-	//memset(console->console_buffer, 0, sizeof(HANDLE));
-
-	
-	
-	
-	return 1;
-}
-
-
-typedef struct {
-	int id;
-	int my_turn; // bool
-
-	struct {
-		int speed;
-	}stats;
-}player_t,*player_ptr;
-
-typedef struct {
-	int player_count;
-}server_t, *server_ptr;
-
-
-void init_player(server_t* server,player_ptr* player) {
-	player_t* tmp = malloc(sizeof(player_t));
-	tmp->id = server->player_count;
-	server->player_count++;
-	*player = tmp;
-}
-
-void init_server(server_ptr* server) {
-	server_t* tmp = malloc(sizeof(server_t));
-	tmp->player_count = 0;
-	*server = tmp;
-}
-
 int main() {
 	console_t* console;
 	init_console(&console, (int2_t) {WIDTH,HEIGHT});
@@ -187,23 +152,6 @@ int main() {
 	player_t* player2;
 	init_player(server, &player2);
 
-	// WINSUCK
-	struct sockaddr_in si_other;
-	int s, slen = sizeof(si_other);
-	char buf[15];
-	char message[15];
-	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2),&wsa);
-
-	s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	memset((char*)&si_other, 0, sizeof(si_other));
-
-	si_other.sin_family = AF_INET;
-	si_other.sin_port = htons(7777);
-	si_other.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
-
-
-
 	char* perse;
 	itoa(server->player_count, &perse, 10);
 	draw_text(console, (int2_t) { WIDTH / 2, HEIGHT / 2 - 1 },&perse, BG_WHITE | FG_BLACK);
@@ -213,7 +161,5 @@ int main() {
 		draw_console(console);
 	}
 
-	closesocket(s);
-	WSACleanup();
 	return 0;
 }

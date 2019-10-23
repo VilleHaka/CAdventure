@@ -28,8 +28,8 @@ project "game"
 	-- kind "WindowedApp"
 	language "C"
 	files { "./game/**.h", "./game/**.c" }
-	-- filter { "files:source/*/**.c" }
-		-- flags {"ExcludeFromBuild"}
+	 --filter { "files:source/*/**.h" }
+		-- folder {"headers"}
 
 	--configuration "x64"
 		--libdirs {}
