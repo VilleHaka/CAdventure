@@ -1,8 +1,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <winsock.h>
-
+#include <winsock2.h>
+#pragma comment(lib,"ws2_32.lib")
 
 #define WIDTH (64)
 #define HEIGHT (32)
@@ -151,6 +151,9 @@ typedef struct {
 	int id;
 	int my_turn; // bool
 
+	struct {
+		int speed;
+	}stats;
 }player_t,*player_ptr;
 
 typedef struct {
@@ -184,7 +187,22 @@ int main() {
 	player_t* player2;
 	init_player(server, &player2);
 
-	
+	// WINSUCK
+	struct sockaddr_in si_other;
+	int s, slen = sizeof(si_other);
+	char buf[15];
+	char message[15];
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2),&wsa);
+
+	s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	memset((char*)&si_other, 0, sizeof(si_other));
+
+	si_other.sin_family = AF_INET;
+	si_other.sin_port = htons(7777);
+	si_other.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+
+
 
 	char* perse;
 	itoa(server->player_count, &perse, 10);
@@ -195,5 +213,7 @@ int main() {
 		draw_console(console);
 	}
 
+	closesocket(s);
+	WSACleanup();
 	return 0;
 }

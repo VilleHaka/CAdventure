@@ -117,7 +117,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\..\builds\Debug\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
