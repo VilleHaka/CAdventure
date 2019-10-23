@@ -1,145 +1,28 @@
 #include <ca/cadventure.h>
 #include <ca/game_logic.h>
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <ca/console.h>
 
-#define WIDTH (64)
-#define HEIGHT (32)
-
-#define FG_BLACK		(0x0000)
-#define FG_DARK_BLUE	(0x0001)
-#define FG_DARK_GREEN	(0x0002)
-#define FG_DARK_CYAN	(0x0003)
-#define FG_DARK_RED		(0x0004)
-#define FG_DARK_MAGENTA	(0x0005)
-#define FG_DARK_YELLOW	(0x0006)
-#define FG_GREY			(0x0007)
-#define FG_DARK_GREY	(0x0008)
-#define FG_BLUE			(0x0009)
-#define FG_GREEN		(0x000A)
-#define FG_CYAN			(0x000B)
-#define FG_RED			(0x000C)
-#define FG_MAGENTA		(0x000D)
-#define FG_YELLOW		(0x000E)
-#define FG_WHITE		(0x000F)
-
-#define BG_BLACK		(0x0000)
-#define BG_DARK_BLUE	(0x0010)
-#define BG_DARK_GREEN	(0x0020)
-#define BG_DARK_CYAN	(0x0030)
-#define BG_DARK_RED		(0x0040)
-#define BG_DARK_MAGENTA	(0x0050)
-#define BG_DARK_YELLOW	(0x0060)
-#define BG_GREY			(0x0070)
-#define BG_DARK_GREY	(0x0080)
-#define BG_BLUE			(0x0090)
-#define BG_GREEN		(0x00A0)
-#define BG_CYAN			(0x00B0)
-#define BG_RED			(0x00C0)
-#define BG_MAGENTA		(0x00D0)
-#define BG_YELLOW		(0x00E0)
-#define BG_WHITE		(0x00F0)
-
-typedef struct {
-	union {
-		struct {
-			int x, y;
-		};
-		int v[2];
-	};
-}int2_t;
-
-typedef struct {
-	int r, g, b;
-}rgb_t;
-
-typedef struct {
-	SHORT C_WIDTH;
-	SHORT C_HEIGHT;
-	SHORT W_WIDTH;
-	SHORT W_HEIGHT;
-
-	LPCTSTR title;
-
-	HANDLE output;
-	HANDLE temp;
-	HANDLE read;
-	COORD render_area;
-	CHAR_INFO* console_buffer;
-	COORD char_buffer_size;
-	COORD char_position;
-	SMALL_RECT write_area;
-
-	CONSOLE_FONT_INFOEX font;
-}console_t,*console_ptr;
-
-
-void init_console(console_ptr *perkele) {
-	console_t* console;
-
-	console = (console_t*)malloc(sizeof(console_t));
-	//console->console_buffer = malloc(size.x * size.y);
-	//SetConsoleTitle(TEXT("CAdventure"));
-	console->output = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	
-	console->title = "CAdventure";
-
-
-	console->W_WIDTH = WIDTH;
-	console->W_HEIGHT = HEIGHT;
-	console->render_area = (COORD){ WIDTH, HEIGHT };
-	console->char_buffer_size = (COORD){ WIDTH, HEIGHT };
-	console->char_position = (COORD){ 0, 0 };
-	console->write_area = (SMALL_RECT){ 0, 0, WIDTH -1, HEIGHT - 1 };
-	console->console_buffer = (CHAR_INFO*)calloc(WIDTH * HEIGHT, sizeof(CHAR_INFO));
-	SetConsoleTitle(TEXT(console->title));
-	CONSOLE_FONT_INFOEX font;
-
-	SMALL_RECT window_size = { 0, 0, WIDTH, HEIGHT };
-	SetConsoleWindowInfo(console->output, FALSE, &window_size);
-
-	CONSOLE_CURSOR_INFO cursor_info;
-	//GetConsoleCursorInfo(console->output, &cursor_info);
-
-	font.cbSize = sizeof(font);
-	font.nFont = 0;
-	font.dwFontSize.X = 8;
-	font.dwFontSize.Y = 16;
-	font.FontFamily = FF_DONTCARE;
-	font.FontWeight = FW_NORMAL;
-	wcscpy(font.FaceName, L"Consolas");
-	SetCurrentConsoleFontEx(console->output, TRUE, &font);
-
-	cursor_info.bVisible = 0;
-	SetConsoleCursorInfo(console->output, &cursor_info);
-	SetConsoleActiveScreenBuffer(console->output);
-	*perkele = console;
-}
-
-
-void draw_text(console_t* console, int2_t pos, const char* text, DWORD color) {
-	for (int i = 0; i < strlen(text); i++) {
-		console->console_buffer[(pos.x + i) + WIDTH * pos.y].Attributes = color;
-		console->console_buffer[(pos.x + i) + WIDTH * pos.y].Char.UnicodeChar = text[i];
-	}
-}
-
-void draw_pixel(console_t* console, int2_t pos, DWORD color) {
-	console->console_buffer[pos.x + WIDTH * pos.y].Attributes = color;
-	console->console_buffer[pos.x + WIDTH * pos.y].Char.UnicodeChar = 'å';
-}
-
-void draw_console(console_t* console) {
-	
-	WriteConsoleOutput(console->output, console->console_buffer, console->char_buffer_size, console->char_position, &console->write_area);
-}
-
+#include <time.h>
 
 int main() {
 	console_t* console;
-	init_console(&console, (int2_t) {WIDTH,HEIGHT});
+	init_console(&console,L"Consolas", "C Proto");
 
+	const char* texts[2] = { "C PROTO","hello world" };
+	clock_t start, end;
+	double el = 0;
+	while (1) {
+		start = clock();
+		memset(console->console_buffer, NULL, WIDTH*HEIGHT*sizeof(CHAR_INFO));
+
+		for (int i = 0; i < (strlen(texts[1]) + 2); i++) {
+			draw_pixel(console, (int2_t) { WIDTH / 2 - ((strlen(texts[1]) / 2) + 1) + i, HEIGHT / 2 - 1 }, BG_DARK_GREY | FG_BLACK, PIXEL_QUARTER);
+			if(i < 2) draw_text(console, (int2_t) { WIDTH / 2 - strlen(texts[i]) / 2, HEIGHT / 2 + i }, texts[i], BG_GREY | FG_BLACK);
+			draw_pixel(console, (int2_t) { WIDTH / 2 - ((strlen(texts[1]) / 2) + 1) + i, HEIGHT / 2 + 2 }, BG_DARK_GREY | FG_BLACK, PIXEL_QUARTER);
+		}
+		
+		draw_console(console);
+		end = clock();
+	}
 	return 0;
 }

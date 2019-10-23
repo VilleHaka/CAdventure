@@ -1,6 +1,7 @@
 #ifndef CA_BEGIN_H
 #define CA_BEGIN_H
 
+#include <Windows.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>

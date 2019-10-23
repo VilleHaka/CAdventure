@@ -6,6 +6,7 @@ int main() {
 	
 	while (1) {
 	}
+
 	closesocket(server->winsock.socket);
 	WSACleanup();
 	return 0;
