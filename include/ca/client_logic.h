@@ -14,11 +14,11 @@ typedef struct {
 		WSADATA wsa;
 	}winsock;
 
-
+	const char* player_id;
 }client_t, *client_ptr;
 
 CA_EXTERN_BEGIN
-CA_API init_client(client_ptr* client, const char* address, int port);
+CA_API init_client(client_ptr* client, const char* address, int port,const char* player_name);
 CA_EXTERN_END
 
 #endif

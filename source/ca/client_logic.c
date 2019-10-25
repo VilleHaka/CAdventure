@@ -1,8 +1,10 @@
 #include <ca/client_logic.h>
+#include <time.h>
 
-CA_API int init_client(client_ptr* client, const char* address, int port) {
+CA_API int init_client(client_ptr* client, const char* address, int port, const char* player_name) {
 	client_t* tmp = malloc(sizeof(client_t));
-
+	tmp->player_id = player_name;
+	
 	//winsock init
 	tmp->winsock.slen = sizeof(tmp->winsock.si_other);
 	{
@@ -17,7 +19,7 @@ CA_API int init_client(client_ptr* client, const char* address, int port) {
 
 	//create socket
 	{
-		if ((tmp->winsock.socket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET)
+		if ((tmp->winsock.socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
 		{
 			printf("Could not create socket : %d\n", WSAGetLastError());
 		}
@@ -31,16 +33,31 @@ CA_API int init_client(client_ptr* client, const char* address, int port) {
 		tmp->winsock.si_other.sin_port = htons(port);
 		tmp->winsock.si_other.sin_addr.S_un.S_addr = inet_addr(address);
 	}
-	printf("Done.\n");
-	////Bind socket
-	//{
-	//	if (bind(tmp->winsock.socket, (struct sockaddr*) &tmp->winsock.server, sizeof(tmp->winsock.server)) == SOCKET_ERROR)
-	//	{
-	//		printf("Bind failed with error code : %d\n", WSAGetLastError());
-	//		return 0;
-	//	}
-	//	printf("Bind done\n");
-	//}
+	time_t start;
+	//connect to server
+	{
+		start = clock();
+		printf("\nconnecting to: %s:%i...\n", address,port);
 
+		int cres = 99;
+		while(1)
+		{
+			cres = connect(tmp->winsock.socket, (SOCKADDR*)& tmp->winsock.si_other, sizeof(tmp->winsock.si_other));
+			if (cres == 0) break;
+			else {
+				printf("... \tconnection failed with error: %ld\n", WSAGetLastError());
+				Sleep(2000);
+			}
+			
+			if ((clock() - start)/1000 > 25) { 
+				closesocket(tmp->winsock.socket);
+				WSACleanup();
+				printf("... \ttimed out :(\n");
+				return 0; 
+			}
+		}
+	}
+	printf("Connection successful.\n");
+	Sleep(2000);
 	*client = tmp;
 }

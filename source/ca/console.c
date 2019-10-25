@@ -8,19 +8,20 @@ CA_API void init_console(console_ptr* console,const char* font,const char* title
 		tmp->title = title;
 		SetConsoleTitle(TEXT(tmp->title));
 
-		GetConsoleScreenBufferInfo(tmp->output, &tmp->scr);		
+		GetConsoleScreenBufferInfoEx(tmp->output, &tmp->scr);		
 		tmp->scr.srWindow = (SMALL_RECT){ 0, 0, WIDTH, HEIGHT};	
 		tmp->scr.bFullscreenSupported = 1;
-		tmp->scr.cbSize = WIDTH * HEIGHT;
+		tmp->scr.cbSize = WIDTH;
 		tmp->scr.dwCursorPosition = (COORD){ 0, 0 };
 		tmp->scr.dwMaximumWindowSize = (COORD){ WIDTH, HEIGHT };
 		tmp->scr.dwSize = (COORD){ WIDTH, HEIGHT };	
-		tmp->console_buffer = (CHAR_INFO*)calloc(tmp->scr.cbSize, sizeof(CHAR_INFO));
+		tmp->console_buffer = (CHAR_INFO*)malloc(tmp->scr.cbSize* sizeof(CHAR_INFO));
+	
 		
-		SetConsoleActiveScreenBuffer(tmp->output);
 		SetConsoleScreenBufferInfoEx(tmp->output, &tmp->scr);
 		SetConsoleScreenBufferSize(tmp->output, tmp->scr.dwSize);
 		SetConsoleWindowInfo(tmp->output, FALSE, &tmp->scr.srWindow);		
+		SetConsoleActiveScreenBuffer(tmp->output);
 	}
 
 	CONSOLE_CURSOR_INFO cursor_info;
