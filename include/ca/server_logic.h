@@ -11,9 +11,10 @@ typedef struct {
 	int player_count;
 
 	struct {
-		SOCKET socket;
-		SOCKET listen;
-		struct sockaddr_in server, si_other;
+		SOCKET udp_socket[10];
+		SOCKET tcp_socket;
+		struct sockaddr_in server_address, client_address;
+		struct addrinfo *result, hints;
 		int slen, recv_len;
 		WSADATA wsa;
 	}winsock;

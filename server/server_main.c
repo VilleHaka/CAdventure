@@ -9,10 +9,10 @@ int main() {
 	Sleep(2000);
 	int* log;
 	SOCKET client_sock = SOCKET_ERROR;
-	server->threads.thread_handles[0] = CreateThread(NULL, 0, &listen_thread, (void*)server->winsock.listen, 0,server);
-//	listen_on_clients(&server);
-	//WaitForSingleObject(th, INFINITE);
-	WaitForMultipleObjects(3, &server->threads.thread_handles, 1, INFINITE);
+	//server->threads.thread_handles[0] = CreateThread(NULL, 0, &listen_thread, (void*)server->winsock.tcp_socket, 0,&server);
+	listen_on_clients(server);
+	//WaitForSingleObject(server->threads.thread_handles, INFINITE);
+	//WaitForMultipleObjects(3, &server->threads.thread_handles, 1, INFINITE);
 	//printf("Waiting for connections... \n");
 	
 	//while(1) {
@@ -46,8 +46,8 @@ int main() {
 		printf("Data: %s\n", buf);
 		Sleep(300);
 	}*/
-
-	closesocket(&server->winsock.socket);
+	closesocket(&server->winsock.tcp_socket);
+	closesocket(&server->winsock.udp_socket);
 	WSACleanup();
 	return 0;
 }

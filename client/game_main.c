@@ -23,7 +23,7 @@ int main() {
 		memset(console->console_buffer, NULL, WIDTH*HEIGHT*sizeof(CHAR_INFO));
 
 		if (GetAsyncKeyState(VK_F1) && !sending) {
-			if (sendto(client->winsock.socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.si_other, &client->winsock.slen) == SOCKET_ERROR) {
+			if (sendto(client->winsock.udp_socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.si_other, &client->winsock.slen) == SOCKET_ERROR) {
 				printf("send failed\n");
 			}
 			printf("sent :)\n");

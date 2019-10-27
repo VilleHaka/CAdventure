@@ -8,7 +8,7 @@
 
 typedef struct {
 	struct {
-		SOCKET socket;
+		SOCKET tcp_socket,udp_socket;
 		struct sockaddr_in si_other;
 		int slen,s;
 		WSADATA wsa;
