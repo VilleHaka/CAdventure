@@ -1,7 +1,8 @@
 #include <ca/console.h>
 
 CA_API void init_console(console_ptr* console,const char* font,const char* title) {
-	console_t* tmp = (console_t*)malloc(sizeof(console_t));
+	console_t* tmp = &console;
+	tmp = (console_t*)malloc(sizeof(console_t));
 
 	tmp->output = (HANDLE)GetStdHandle(STD_OUTPUT_HANDLE);
 	{
@@ -15,8 +16,8 @@ CA_API void init_console(console_ptr* console,const char* font,const char* title
 		tmp->scr.dwCursorPosition = (COORD){ 0, 0 };
 		tmp->scr.dwMaximumWindowSize = (COORD){ WIDTH, HEIGHT };
 		tmp->scr.dwSize = (COORD){ WIDTH, HEIGHT };	
-		tmp->console_buffer = (CHAR_INFO*)malloc(tmp->scr.cbSize* sizeof(CHAR_INFO));
-	
+		tmp->console_buffer = (CHAR_INFO*)malloc(tmp->scr.cbSize*sizeof(CHAR_INFO));
+		
 		
 		SetConsoleScreenBufferInfoEx(tmp->output, &tmp->scr);
 		SetConsoleScreenBufferSize(tmp->output, tmp->scr.dwSize);

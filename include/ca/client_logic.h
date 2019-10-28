@@ -8,8 +8,8 @@
 
 typedef struct {
 	struct {
-		SOCKET tcp_socket,udp_socket;
-		struct sockaddr_in si_other;
+		SOCKET udp_socket;
+		struct sockaddr_in ReceiverAddr, SrcInfo;
 		int slen,s;
 		WSADATA wsa;
 	}winsock;
