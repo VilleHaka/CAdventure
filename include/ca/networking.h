@@ -12,7 +12,7 @@
 typedef struct {
 	SOCKET socket;
 	fd_set readfds;
-	struct sockaddr_in this_address, client_address;
+	struct sockaddr_in this_address, other_address;
 	WSADATA wsa;
 }network_t;
 

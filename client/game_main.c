@@ -29,7 +29,7 @@ int main() {
 	
 		if (GetAsyncKeyState(VK_F1) && !sending) {
 			if (sendto(client->winsock.socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.this_address, sizeof(struct sockaddr_in)) == SOCKET_ERROR) {
-				draw_text(console, (int2_t) {0, 0 }, TEXT("send failed %d", WSAGetLastError()), BG_WHITE | FG_BLACK);
+				draw_text(console, (int2_t) {0, 0 }, TEXT("send failed %i", WSAGetLastError()), BG_WHITE | FG_BLACK);
 			}
 			else draw_text(console, (int2_t) { 0, 0}, texts[2], BG_WHITE | FG_BLACK);
 

@@ -78,7 +78,6 @@ CA_API void	ca_server_loop(server_t* server ) {
 				struct sockaddr_in connecting_client;
 				int32_t address_length = (int32_t)sizeof(struct sockaddr_in);
 				int valread = recvfrom((SOCKET)server->winsock.socket, buffer, 512, 0, (struct sockaddr*) &connecting_client, &address_length);
-			
 				int found = 0;
 				for (int i = 0; i < server->player_count; i++) {
 					if (server->clients[i].sin_addr.S_un.S_addr == connecting_client.sin_addr.S_un.S_addr) {
@@ -88,7 +87,9 @@ CA_API void	ca_server_loop(server_t* server ) {
 				}
 				if (!found) {
 					server->clients[server->player_count].sin_addr = connecting_client.sin_addr;
-					printf(".\tnew player: %s\n\tmessage: '%s'\n", inet_ntoa(server->clients[server->player_count].sin_addr),&buffer);	
+					printf(".\tnew player: %s\n\tname: '%s'\n", inet_ntoa(server->clients[server->player_count].sin_addr),&buffer);
+					Sleep(200);
+					sendto((SOCKET)server->winsock.socket, 0, 0, 0, (struct sockaddr*) & server->clients[server->player_count], sizeof(struct sockaddr_in));
 					server->player_count++;
 				}
 			}
@@ -100,8 +101,20 @@ CA_API int ca_client(client_ptr* client, const char* address, int port, const ch
 	tmp = (client_t*)malloc(sizeof(client_t));
 	tmp->player_id = player_name;
 	ca_network(&tmp->winsock, address, port, SOCK_DGRAM);
-
-	Sleep(1000);
+	
+	int32_t address_length = (int32_t)sizeof(struct sockaddr_in);
+	printf("handshaking server at %s:%i..\n", address, port);
+	
+	struct sockaddr_in rec;
+	while (1) {
+		sendto((SOCKET)tmp->winsock.socket, tmp->player_id, strlen(tmp->player_id), 0, (struct sockaddr*) & tmp->winsock.this_address, sizeof(struct sockaddr_in));
+		int r = recvfrom((SOCKET)tmp->winsock.socket, 0, 0, 0, (struct sockaddr*) & rec, &address_length);
+		if (r > 0) break;
+		printf("!\thandshake failed %i, retrying..\n",r);
+		Sleep(2000);
+	}
+	printf("connection ok\n");
+	Sleep(2000);
 	*client = tmp;
 }
 
