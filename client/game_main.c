@@ -8,7 +8,7 @@
 int main() {
 	WSACleanup();
 	client_t* client;
-	ca_client(&client, "127.0.0.1", 8080, "perse");
+	ca_client(&client, "127.0.0.1", 7777, "perse");
 
 	console_t* console;
 	init_console(&console,L"Consolas", "C Proto");
@@ -28,7 +28,7 @@ int main() {
 		}
 	
 		if (GetAsyncKeyState(VK_F1) && !sending) {
-			if (sendto(client->winsock.socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.this_address, sizeof(struct sockaddr_in)) == SOCKET_ERROR) {
+			if (sendto(client->winsock.write_socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.this_address, sizeof(struct sockaddr_in)) == SOCKET_ERROR) {
 				draw_text(console, (int2_t) {0, 0 }, TEXT("send failed %i", WSAGetLastError()), BG_WHITE | FG_BLACK);
 			}
 			else draw_text(console, (int2_t) { 0, 0}, texts[2], BG_WHITE | FG_BLACK);
@@ -42,7 +42,8 @@ int main() {
 
 		end = clock();
 	}
-	closesocket(client->winsock.socket);
+	closesocket(client->winsock.read_socket);
+	closesocket(client->winsock.write_socket);
 	WSACleanup();
 	return 0;
 }

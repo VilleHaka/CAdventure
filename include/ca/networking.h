@@ -10,7 +10,7 @@
 #define MAX_CLIENTS 10
 
 typedef struct {
-	SOCKET socket;
+	SOCKET write_socket,read_socket;
 	fd_set readfds;
 	struct sockaddr_in this_address, other_address;
 	WSADATA wsa;
