@@ -3,7 +3,7 @@
 
 #include "begin.h"
 
-#include <ca/server_logic.h>
+#include <ca/networking.h>
 #include <ca/player_logic.h>
 
 CA_EXTERN_BEGIN
