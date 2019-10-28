@@ -7,8 +7,6 @@
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32.lib")
 
-
-
 typedef struct {
 	int player_count;	
 	struct {

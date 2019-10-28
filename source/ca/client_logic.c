@@ -2,7 +2,8 @@
 #include <time.h>
 
 CA_API int init_client(client_ptr* client, const char* address, int port, const char* player_name) {
-	client_t* tmp = malloc(sizeof(client_t));
+	client_t* tmp = &client;
+	tmp = (client_t*)malloc(sizeof(client_t));
 	tmp->player_id = player_name;
 	
 	printf("Initialising Winsock...\n");

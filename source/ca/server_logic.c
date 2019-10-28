@@ -52,8 +52,6 @@ CA_API int init_server(server_ptr* server,int port) {
 	*server = tmp;
 }
 
-
-
 CA_API void	server_loop(server_t* server ) {
 
 	char buffer[512];
@@ -69,7 +67,7 @@ CA_API void	server_loop(server_t* server ) {
 				int found = 0;
 				for (int i = 0; i < server->player_count; i++) {
 					if (server->winsock.client_address[i].sin_addr.S_un.S_addr == connecting_client.sin_addr.S_un.S_addr) {
-						printf(".\texisting player: %s\n\tmessage: %s\n", inet_ntoa(connecting_client.sin_addr),&buffer);			
+						printf(".\texisting player: %s\n\tmessage: '%s'\n", inet_ntoa(connecting_client.sin_addr),&buffer);			
 						found = 1;
 					}
 				}

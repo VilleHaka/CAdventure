@@ -12,17 +12,17 @@ CA_API void init_console(console_ptr* console,const char* font,const char* title
 		GetConsoleScreenBufferInfoEx(tmp->output, &tmp->scr);		
 		tmp->scr.srWindow = (SMALL_RECT){ 0, 0, WIDTH, HEIGHT};	
 		tmp->scr.bFullscreenSupported = 1;
-		tmp->scr.cbSize = WIDTH;
+		tmp->scr.cbSize = WIDTH*HEIGHT*sizeof(CHAR_INFO);
 		tmp->scr.dwCursorPosition = (COORD){ 0, 0 };
 		tmp->scr.dwMaximumWindowSize = (COORD){ WIDTH, HEIGHT };
 		tmp->scr.dwSize = (COORD){ WIDTH, HEIGHT };	
-		tmp->console_buffer = (CHAR_INFO*)malloc(tmp->scr.cbSize*sizeof(CHAR_INFO));
-		
-		
+		tmp->console_buffer = (CHAR_INFO*)malloc((int)tmp->scr.cbSize*sizeof(CHAR_INFO));
+		memset(tmp->console_buffer, 0, tmp->scr.cbSize);
+		SetConsoleActiveScreenBuffer(tmp->output);
 		SetConsoleScreenBufferInfoEx(tmp->output, &tmp->scr);
 		SetConsoleScreenBufferSize(tmp->output, tmp->scr.dwSize);
-		SetConsoleWindowInfo(tmp->output, FALSE, &tmp->scr.srWindow);		
-		SetConsoleActiveScreenBuffer(tmp->output);
+		SetConsoleWindowInfo(tmp->output, TRUE, &tmp->scr.srWindow);		
+		
 	}
 
 	CONSOLE_CURSOR_INFO cursor_info;
@@ -59,5 +59,5 @@ CA_API void draw_pixel(console_t* console, int2_t pos, DWORD color,char sym) {
 }
 
 CA_API void draw_console(console_t* console) {
-	WriteConsoleOutput(console->output, console->console_buffer, console->scr.dwSize, console->scr.dwCursorPosition, &console->scr.srWindow);
+	WriteConsoleOutputA(console->output, console->console_buffer, console->scr.dwSize, console->scr.dwCursorPosition, &console->scr.srWindow);
 }
