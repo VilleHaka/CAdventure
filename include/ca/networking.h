@@ -10,7 +10,7 @@
 #define MAX_CLIENTS 10
 
 typedef struct {
-	SOCKET write_socket,read_socket;
+	SOCKET socket;
 	fd_set readfds;
 	struct sockaddr_in this_address, other_address;
 	WSADATA wsa;
@@ -39,7 +39,7 @@ CA_API unsigned __stdcall		client_thread(void* data);
 CA_API int						ca_client(client_ptr* client, const char* address, int port, const char* player_name);
 CA_API int						ca_network(network_t* network, long address, int port, int socket_type);
 CA_API int						ca_wsa(network_t* netw);
-CA_API int						ca_socket(network_t* netw, int socket_type);
+CA_API int						ca_socket(network_t* netw, int socket_type, int protocol);
 CA_API int						ca_address(network_t* netw, const char* address, int port);
 CA_API int						ca_bind_socket(network_t* netw);
 CA_EXTERN_END
