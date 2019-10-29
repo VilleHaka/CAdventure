@@ -5,10 +5,30 @@
 
 #include <time.h>
 
+void Login(client_t* client)
+{
+    char ip[20];
+    char name[20];
+    char port[4];
+    printf("Welcome to the game sir!\nGive us some info we need to get you connected!\n");
+    printf("Ip address: ");
+    gets(ip);
+    printf("Port: ");
+    gets(port);
+    printf("Username: ");
+    gets(name);
+    printf("Connecting to ip %s:%s.", ip, port);
+    printf("\nLogging in\n");
+    ca_client(client, ip, atoi(port), name);
+}
+
 int main() {
+ 
 	WSACleanup();
 	client_t* client;
-	ca_client(&client, "127.0.0.1", 7777, "anus");
+    Login(&client);
+
+	 //77.223.41.27, 7777 // ville's IP addresso
 
 	console_t* console;
 	init_console(&console,L"Consolas", "C Proto");
