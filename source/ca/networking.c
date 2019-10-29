@@ -69,29 +69,30 @@ CA_API int ca_server(server_ptr* server,int port) {
 
 CA_API void	ca_server_loop(server_t* server ) {
 
-	char buffer[512] = { 0 };
+	char buffer[1024] = { 0 };
 	printf("\nreceiving... \n");
 	while (1) {
 			if (server->winsock.socket != SOCKET_ERROR)
 			{						
-				memset(&buffer, 0, 512);
+				memset(buffer, 0, 1024*sizeof(char));
 			
 				struct sockaddr_in connecting_client;
 				int32_t address_length = (int32_t)sizeof(struct sockaddr_in);
-				int valread = recvfrom((SOCKET)server->winsock.socket, &buffer, sizeof(buffer), 0, (struct sockaddr*) &connecting_client, &address_length);
-				
+				int valread = recvfrom((SOCKET)server->winsock.socket, buffer, sizeof(buffer), 0, (struct sockaddr*) &connecting_client, &address_length);
+				//printf("%i\n", valread);
 				int found = 0;
 				for (int i = 0; i < server->player_count; i++) {
 					if (server->clients[i].sin_addr.S_un.S_addr == connecting_client.sin_addr.S_un.S_addr) {
-						man_t *manif = (man_t*)buffer;
-						manif->name = buffer + 16;
-						printf(".\texisting player: %s\nname: %s uptime: %f\n", inet_ntoa(connecting_client.sin_addr),manif->name,(double)manif->uptime);			
-                        //sendto((SOCKET)server->winsock.socket, "reply", strlen("reply"), 0, (struct sockaddr*) & connecting_client, &address_length);
+						man_ptr manif = (man_ptr)buffer;
+						printf(".\texisting player: %s\n\tname: %s uptime: %f command: %s\n", inet_ntoa(connecting_client.sin_addr),manif->name,manif->uptime,manif->command);
+
+						strcpy(manif->command, "");
+
+                        sendto((SOCKET)server->winsock.socket, &manif,sizeof(manif), 0, (struct sockaddr*) & connecting_client, &address_length);
 						found = 1;
 					}
 				}
-				if (!found) {
-					
+				if (!found) {				
 					server->clients[server->player_count].sin_addr = connecting_client.sin_addr;
 					printf(".\tnew player: %s\n\tdata: '%s'\n", inet_ntoa(server->clients[server->player_count].sin_addr),buffer);
 					sendto((SOCKET)server->winsock.socket, buffer, strlen(buffer), 0, (struct sockaddr*) & connecting_client, &address_length);
@@ -103,11 +104,12 @@ CA_API void	ca_server_loop(server_t* server ) {
 		}
 }
 
-CA_API int ca_client(client_ptr* client, const char* address, int port, const char* player_name) {
+CA_API int ca_client(client_ptr* client, const char* address, int port, char* player_name) {
 	printf("CLIENT\ninitialising winsock...\n");
 	client_t* tmp = &client;
 	tmp = (client_t*)malloc(sizeof(client_t));
-	tmp->mani.name = player_name;
+	tmp->mani = (man_ptr)malloc(sizeof(man_t));
+	strcpy(tmp->mani->name,&player_name);
 
 
 	ca_network(&tmp->winsock, address, port, SOCK_DGRAM); 
@@ -129,21 +131,21 @@ CA_API int ca_client(client_ptr* client, const char* address, int port, const ch
 				continue;
 			}
 			printf(".\treceived handshake\n");
-			tmp->start_time = clock();
 			break;
 		}
-		
+	tmp->mani->start_time = clock();
 	printf("connection ok\n");
 	Sleep(2000);
 	*client = tmp;
 }
 
 
-CA_API void	ca_client_loop(server_t* client) {
-	//while (1) {
-	//	for(int i = 0; i < )
+CA_API void	ca_client_loop(client_t* client) {
+	client->mani->uptime = (clock() - client->mani->start_time) / 1000;
 
-	//	double elapsed = (clock() - client->start_time) / 1000;
-	//	int se = sendto((SOCKET)client->winsock.socket, TEXT("%d", elapsed), 4, 0, (struct sockaddr*) & client->winsock.this_address, (int32_t)sizeof(struct sockaddr_in));
-	//}
+	int se = sendto((SOCKET)client->winsock.socket, client->mani, sizeof(client->mani), 0, (struct sockaddr*) & client->winsock.this_address, (int32_t)sizeof(struct sockaddr_in));
+	char buff[1024];
+	int re = recvfrom((SOCKET)client->winsock.socket,&client->mani, sizeof(client->mani),0, (struct sockaddr*) & client->winsock.this_address, (int32_t)sizeof(struct sockaddr_in));
+	//man_ptr new_man = (man_ptr)buff;
+	//memcpy(client->mani, &new_man, sizeof(new_man));
 }

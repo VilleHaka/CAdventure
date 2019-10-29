@@ -8,15 +8,13 @@
 #pragma comment(lib,"ws2_32.lib")
 
 #define MAX_CLIENTS 10
-
+#define CHAR_MAX 1000
 
 typedef struct {
 	double start_time, uptime;
-	const char* name;
-}man_t;
-
-
-
+	char name[CHAR_MAX];
+	char command[CHAR_MAX];
+}man_t, *man_ptr;
 
 typedef struct {
 	SOCKET socket;
@@ -36,16 +34,14 @@ typedef struct {
 
 typedef struct {
 	network_t winsock;
-	man_t mani;
-	clock_t start_time;
-	
+	man_ptr mani;	
 }client_t, * client_ptr;
 
 CA_EXTERN_BEGIN
 CA_API int						ca_server(server_ptr* server,int port);
 CA_API void						listen_on_clients(server_t* server);
 CA_API void						ca_server_loop(server_t* server);
-CA_API void						ca_client_loop(server_t* server);
+CA_API void						ca_client_loop(client_t* client);
 CA_API unsigned __stdcall		listen_thread(void* data);
 CA_API unsigned __stdcall		client_thread(void* data);
 CA_API int						ca_client(client_ptr* client, const char* address, int port, const char* player_name);
