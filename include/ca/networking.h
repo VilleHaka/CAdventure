@@ -9,6 +9,8 @@
 
 #define MAX_CLIENTS 10
 #define CHAR_MAX 1000
+#define POLL_TIME 100
+#define MAN_SIZE (int32_t)sizeof(man_t)
 
 typedef struct {
 	double start_time, uptime;
@@ -34,7 +36,7 @@ typedef struct {
 
 typedef struct {
 	network_t winsock;
-	man_ptr mani;	
+	man_t mani;	
 }client_t, * client_ptr;
 
 CA_EXTERN_BEGIN

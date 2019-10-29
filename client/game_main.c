@@ -53,7 +53,7 @@ int main() {
 	double elapsed = 0;
 	while (1) {
 		memset(console->console_buffer, 0,console->scr.cbSize);
-		client->mani->uptime = (double)(clock() - client->mani->start_time);
+		client->mani.uptime = (double)(clock() - client->mani.start_time);
 
 		
 		for (int i = 0; i < (strlen(texts[1]) + 2); i++) {
@@ -63,9 +63,7 @@ int main() {
 		}
 	
 		if (GetAsyncKeyState(VK_F1) && !sending) {
-			strcpy(client->mani->command, "sups");
-
-			
+			strcpy(client->mani.command, "sups");			
 			/*if (sendto(client->winsock.socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.this_address, sizeof(struct sockaddr_in)) == SOCKET_ERROR) {
 				draw_text(console, (int2_t) {0, 0 }, TEXT("send failed %i", WSAGetLastError()), BG_WHITE | FG_BLACK);
 			}
@@ -75,18 +73,6 @@ int main() {
 		}
 		else if (!GetAsyncKeyState(VK_F1) && sending) sending = 0;
 		
-		//if (sending == 1) {
-		//
-		//	if (WSAGetLastError() == SOCKET_ERROR) {
-		//		draw_text(console, (int2_t) { 0, 0}, TEXT("send failed %i", WSAGetLastError()), BG_WHITE | FG_BLACK);
-		//	}
-		//	else draw_text(console, (int2_t) { 0, 0}, texts[2], BG_WHITE | FG_BLACK);
-		//	draw_console(console);
-		//	Sleep(2000);
-		//}
-		//else {
-		//	
-		//}
 		ca_client_loop(client);
 		draw_console(console);
 	}
