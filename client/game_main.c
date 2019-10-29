@@ -8,7 +8,7 @@
 int main() {
 	WSACleanup();
 	client_t* client;
-	ca_client(&client, "127.0.0.1", 7777, "anus");
+	ca_client(&client, "77.223.41.27", 7777, "anus");
 
 	console_t* console;
 	init_console(&console,L"Consolas", "C Proto");

@@ -49,7 +49,7 @@ CA_API int	ca_bind_socket(network_t* netw) {
 
 CA_API int ca_network(network_t* network, long address, int port, int socket_type) {
 	int is_server = address == ADDR_ANY ? 1 : 0;
-	if (!ca_wsa(network) && !ca_socket(network, socket_type,IPPROTO_UDP) && !ca_address(network, address, port)) {
+	if (!ca_wsa(network) && !ca_socket(network, socket_type,0) && !ca_address(network, address, port)) {
 		if (is_server)!ca_bind_socket(network);
 		printf(".\twinsock init succesful\n");
 		return 0;
@@ -63,7 +63,7 @@ CA_API int ca_server(server_ptr* server,int port) {
 	tmp =  malloc(sizeof(server_t));
 	tmp->player_count = 0;
 	ca_network(&tmp->winsock,ADDR_ANY,port,SOCK_DGRAM);
-	printf("network ready\n");
+
 	*server = tmp;
 }
 
@@ -81,13 +81,14 @@ CA_API void	ca_server_loop(server_t* server ) {
 				int found = 0;
 				for (int i = 0; i < server->player_count; i++) {
 					if (server->clients[i].sin_addr.S_un.S_addr == connecting_client.sin_addr.S_un.S_addr) {
-						printf(".\texisting player: %s\n\tmessage: '%s'\n", inet_ntoa(connecting_client.sin_addr),&buffer);			
+						printf(".\texisting player: %s\n\tdata: '%s'\n", inet_ntoa(connecting_client.sin_addr),&buffer);
+
 						found = 1;
 					}
 				}
 				if (!found) {
 					server->clients[server->player_count].sin_addr = connecting_client.sin_addr;
-					printf(".\tnew player: %s\n\tname: '%s'\n", inet_ntoa(server->clients[server->player_count].sin_addr),&buffer);
+					printf(".\tnew player: %s\n\tdata: '%s'\n", inet_ntoa(server->clients[server->player_count].sin_addr),&buffer);
 					sendto((SOCKET)server->winsock.socket, buffer, strlen(buffer), 0, (struct sockaddr*) & connecting_client, &address_length);
 					printf(".\treplying back...\n");								
 					
@@ -105,30 +106,34 @@ CA_API int ca_client(client_ptr* client, const char* address, int port, const ch
 	ca_network(&tmp->winsock, address, port, SOCK_DGRAM);
 	 
 	int32_t address_length = (int32_t)sizeof(struct sockaddr_in);
-	printf("handshaking server at %s:%i..\n", address, port);
+	printf("handshake to server at %s:%i..\n", address, port);
 	
 	struct sockaddr_in rec;
 	char check[5];
-	const char *greet = "hello";
+	const char* greet = "hello";
 		while (1) {		
 			memset(&check, NULL, 5);
-
 			int siz = sendto((SOCKET)tmp->winsock.socket, greet, strlen(greet),0, (struct sockaddr*) & tmp->winsock.this_address, &address_length);		
 			int r = recvfrom((SOCKET)tmp->winsock.socket, check, strlen(greet), 0, (struct sockaddr*) & rec, &address_length);
-			printf("%s\n", check);
 			if (r == -1) {
 				printf("!\tfailed, error %d.. retrying\n", WSAGetLastError());
 				Sleep(2000);
 				continue;
 			}
-			printf(".\treceiving handshake\n");
+			printf(".\treceived handshake\n");
+			tmp->start_time = clock();
 			break;
 		}
 		
-	
 	printf("connection ok\n");
 	Sleep(2000);
 	*client = tmp;
 }
 
 
+CA_API void	ca_client_loop(client_t* client) {
+	while (1) {
+		double elapsed = (clock() - client->start_time) / 1000;
+		int se = sendto((SOCKET)client->winsock.socket, TEXT("%d", elapsed), 4, 0, (struct sockaddr*) & client->winsock.this_address, (int32_t)sizeof(struct sockaddr_in));
+	}
+}
