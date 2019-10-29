@@ -81,7 +81,8 @@ CA_API void	ca_server_loop(server_t* server ) {
 				int found = 0;
 				for (int i = 0; i < server->player_count; i++) {
 					if (server->clients[i].sin_addr.S_un.S_addr == connecting_client.sin_addr.S_un.S_addr) {
-						printf(".\texisting player: %s\n\tdata: '%s'\n", inet_ntoa(connecting_client.sin_addr),&buffer);
+						printf(".\texisting player: %s\n\tmessage: '%s'\n", inet_ntoa(connecting_client.sin_addr),&buffer);			
+                        sendto((SOCKET)server->winsock.socket, buffer, strlen(buffer), 0, (struct sockaddr*) & connecting_client, &address_length);
 
 						found = 1;
 					}
@@ -113,11 +114,15 @@ CA_API int ca_client(client_ptr* client, const char* address, int port, const ch
 	const char* greet = "hello";
 		while (1) {		
 			memset(&check, NULL, 5);
-			int siz = sendto((SOCKET)tmp->winsock.socket, greet, strlen(greet),0, (struct sockaddr*) & tmp->winsock.this_address, &address_length);		
+
+			int siz = sendto((SOCKET)tmp->winsock.socket, greet, strlen(greet),0, (struct sockaddr*) & tmp->winsock.this_address, &address_length);
 			int r = recvfrom((SOCKET)tmp->winsock.socket, check, strlen(greet), 0, (struct sockaddr*) & rec, &address_length);
+			printf(".\t%s - received handshake", check);
+            printf(" connected to the server!\n");
+
 			if (r == -1) {
 				printf("!\tfailed, error %d.. retrying\n", WSAGetLastError());
-				Sleep(2000);
+				Sleep(4000);
 				continue;
 			}
 			printf(".\treceived handshake\n");
