@@ -5,6 +5,16 @@
 
 #include <time.h>
 
+
+/* 
+			uint8_t mem [1024] = {0};
+			memcpy (mem, &header, 24);
+			memcpy (mem + 24, &data, sizeof (fcs_data_t));
+
+			uint32_t writen = 0;
+			ruska_socket_send_to (socket, mem, sizeof (fcs_data_t) + 24, &writen, address, port);
+*/
+
 void Login(client_t* client)
 {
     char ip[20];
@@ -40,15 +50,16 @@ int main() {
 	clock_t start, end;
 	double el = 0;
 	int sending = 0;
+	double elapsed = 0;
 	while (1) {
-		start = clock();
 		memset(console->console_buffer, 0,console->scr.cbSize);
-		
-		for (int i = 0; i < (strlen(texts[1]) + 2); i++) {
+		client->mani.uptime = (double)(clock() - client->mani.start_time);
+		int se = sendto((SOCKET)client->winsock.socket, &client->mani, sizeof(man_t), 0, (struct sockaddr*) & client->winsock.this_address, (int32_t)sizeof(struct sockaddr_in));
+		/*for (int i = 0; i < (strlen(texts[1]) + 2); i++) {
 			draw_pixel(console, (int2_t) { WIDTH / 2 - ((strlen(texts[1]) / 2) + 1) + i, HEIGHT / 2 - 1 }, BG_DARK_GREY | FG_BLACK, PIXEL_QUARTER);
 			if(i < 2) draw_text(console, (int2_t) { WIDTH / 2 - strlen(texts[i]) / 2, HEIGHT / 2 + i }, texts[i], BG_GREY | FG_BLACK);
 			draw_pixel(console, (int2_t) { WIDTH / 2 - ((strlen(texts[1]) / 2) + 1) + i, HEIGHT / 2 + 2 }, BG_DARK_GREY | FG_BLACK, PIXEL_QUARTER);
-		}
+		}*/
 	
 		if (GetAsyncKeyState(VK_F1) && !sending) {
 			if (sendto(client->winsock.socket, "perse", strlen("perse"), 0, (struct sockaddr*) & client->winsock.this_address, sizeof(struct sockaddr_in)) == SOCKET_ERROR) {
@@ -60,10 +71,10 @@ int main() {
 		}
 		else if (!GetAsyncKeyState(VK_F1) && sending) sending = 0;
 		
-		if (sending == 1)draw_console(console),Sleep(2000);
-		else draw_console(console);
-
-		end = clock();
+	/*	if (sending == 1)draw_console(console),Sleep(2000);
+		else draw_console(console);*/
+	
+		printf("%f\n", client->mani.uptime);
 	}
 	closesocket(client->winsock.socket);
 

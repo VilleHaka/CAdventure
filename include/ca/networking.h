@@ -9,6 +9,15 @@
 
 #define MAX_CLIENTS 10
 
+
+typedef struct {
+	double start_time, uptime;
+	const char* name;
+}man_t;
+
+
+
+
 typedef struct {
 	SOCKET socket;
 	fd_set readfds;
@@ -27,8 +36,9 @@ typedef struct {
 
 typedef struct {
 	network_t winsock;
-	time_t start_time;
-	const char* player_id;
+	man_t mani;
+	clock_t start_time;
+	
 }client_t, * client_ptr;
 
 CA_EXTERN_BEGIN
