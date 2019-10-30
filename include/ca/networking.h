@@ -8,12 +8,14 @@
 #pragma comment(lib,"ws2_32.lib")
 
 #define MAX_CLIENTS 10
-#define CHAR_MAX 1000
+#define CHAR_MAX 10
 #define POLL_TIME 100
+#define TIMEOUT 10
 #define MAN_SIZE (int32_t)sizeof(man_t)
 
+
 typedef struct {
-	double start_time, uptime;
+	double start_time, uptime,last_online;
 	char name[CHAR_MAX];
 	char command[CHAR_MAX];
 }man_t, *man_ptr;
@@ -28,6 +30,7 @@ typedef struct {
 typedef struct {
 	int player_count;	
 	struct sockaddr_in clients[MAX_CLIENTS];
+	man_t clients_prev_man[MAX_CLIENTS];
 	network_t winsock;
 	struct {
 		HANDLE client_handle[10];
