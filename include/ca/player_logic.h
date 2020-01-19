@@ -2,7 +2,7 @@
 #define CA_PLAYER_H
 
 #include "begin.h"
-
+#define WAMWAMBAM 0
 typedef enum {
     IDLE,
     AFK,
