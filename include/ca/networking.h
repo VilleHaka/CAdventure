@@ -7,6 +7,8 @@
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32.lib")
 
+#define LASTING
+#define QQ 1
 #define MAX_CLIENTS 10
 #define CHAR_MAX 10
 #define POLL_TIME 100
