@@ -3,4 +3,6 @@
 
 #include "begin.h"
 
+#define TEST 3
+
 #endif
